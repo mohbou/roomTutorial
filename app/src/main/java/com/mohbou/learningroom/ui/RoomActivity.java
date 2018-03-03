@@ -2,6 +2,7 @@ package com.mohbou.learningroom.ui;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
@@ -19,6 +20,9 @@ public class RoomActivity extends AppCompatActivity {
     private AppDatabase database;
 
     private RecyclerView recyclerView;
+    private ViewAdapter viewAdapter;
+    private List<User> users;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +30,8 @@ public class RoomActivity extends AppCompatActivity {
         database = AppDatabase.getInstance(this);
 
         recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
 
         int userCount = database.userDao().usersCount();
 
@@ -36,14 +42,17 @@ public class RoomActivity extends AppCompatActivity {
         else {
             Toast.makeText(this, "Users not found - create users", Toast.LENGTH_LONG).show();
 
-            List<User> users = new ArrayList<>();
+            users = new ArrayList<>();
             for (int i = 0; i < 10; i++) {
                 User user= new User(UUID.randomUUID().toString(),"Moe "+i,"Joe "+i);
                 users.add(user);
             }
-
             database.userDao().insertAll(users);
         }
+
+        viewAdapter =  new ViewAdapter(database.userDao().allUsers());
+        recyclerView.setAdapter(viewAdapter);
+
 
     }
 
