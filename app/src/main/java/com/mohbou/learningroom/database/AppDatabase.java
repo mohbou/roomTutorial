@@ -14,10 +14,12 @@ public abstract class AppDatabase extends RoomDatabase{
 
     public static AppDatabase getInstance(Context context) {
         if (instance == null) {
+            synchronized (AppDatabase.class) {
             instance =  Room.databaseBuilder(context.getApplicationContext(),
                              AppDatabase.class,"myapp-db")
                             .allowMainThreadQueries()
                             .build();
+            }
         }
         return instance;
     }
