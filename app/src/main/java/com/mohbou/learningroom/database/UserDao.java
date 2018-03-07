@@ -20,6 +20,9 @@ public interface UserDao {
     @Query("SELECT COUNT(*) from user")
     int usersCount();
 
-    @Query("SELECT * from user")
+    @Query("SELECT * from user ORDER BY firstName")
     List<User>  allUsers();
+
+    @Query("SELECT * FROM user WHERE id= :id")
+    User findById(String id);
 }

@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.mohbou.learningroom.R;
@@ -37,7 +38,8 @@ public class RoomActivity extends AppCompatActivity {
 
         if(userCount>0) {
             Toast.makeText(this, "Users found", Toast.LENGTH_LONG).show();
-            database.userDao().allUsers().stream().forEach(user ->System.out.println(user.getLastName()));
+            users =database.userDao().allUsers();
+            users.stream().forEach(user ->System.out.println(user.getLastName()));
         }
         else {
             Toast.makeText(this, "Users not found - create users", Toast.LENGTH_LONG).show();
@@ -53,6 +55,9 @@ public class RoomActivity extends AppCompatActivity {
         viewAdapter =  new ViewAdapter(database.userDao().allUsers());
         recyclerView.setAdapter(viewAdapter);
 
+        //testing query by ID
+        final User user = database.userDao().findById(users.get(0).getId());
+        Log.d("TEST", "User find by ID using query for ID "+users.get(0).getId()+ " is "+user.getFirstName()+" "+user.getLastName());
 
     }
 
