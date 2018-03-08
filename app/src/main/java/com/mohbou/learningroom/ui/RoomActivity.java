@@ -1,5 +1,7 @@
 package com.mohbou.learningroom.ui;
 
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,6 +36,9 @@ public class RoomActivity extends AppCompatActivity {
     private final CompositeDisposable mDisposable = new CompositeDisposable();
     private User user;
 
+    private CustomViewModelFactory customViewModelFactory;
+    private UserViewModel userViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +50,9 @@ public class RoomActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         viewAdapter = new ViewAdapter(users);
         recyclerView.setAdapter(viewAdapter);
+
+        customViewModelFactory = new CustomViewModelFactory(getUserDao());
+        userViewModel = ViewModelProviders.of(this,customViewModelFactory).get(UserViewModel.class);
 
         allUsers();
 
@@ -66,7 +74,7 @@ public class RoomActivity extends AppCompatActivity {
 
     private int getCount() {
 
-        mDisposable.add(getUserDao().usersCount()
+        mDisposable.add(userViewModel.getCount()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(count -> userCount = count));
@@ -77,7 +85,7 @@ public class RoomActivity extends AppCompatActivity {
     //insert fake users if database is empty
     private List<User> allUsers() {
 
-        mDisposable.add(getUserDao().allUsers()
+        mDisposable.add(userViewModel.allUsers()
                 .map(users -> {
                             if (users.size() > 0) {
                                 users.stream().forEach(user -> System.out.println("user Last name "+ user.getLastName()));
@@ -101,7 +109,7 @@ public class RoomActivity extends AppCompatActivity {
     }
 
     private User findUserById() {
-        mDisposable.add(getUserDao().findById(users.get(0).getId())
+        mDisposable.add(userViewModel.findUserById(users.get(0).getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(foundUser -> {
@@ -114,12 +122,14 @@ public class RoomActivity extends AppCompatActivity {
 
     private void insertUsers(final List<User> users) {
         mDisposable.add(Completable.fromAction(() ->
-                getUserDao().insertAll(users))
+                userViewModel.insertUsers(users))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> Log.d("test", "insertUsers: successful"),
                         throwable -> Log.e("test", "insertUsers: Unable to insert users", throwable)));
 
     }
+
+
 
 }

@@ -18,13 +18,13 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        targetCompatibility 1.8
-        sourceCompatibility 1.8
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -34,16 +34,21 @@ dependencies {
     implementation deps.support.recyclerview
     implementation deps.constraint_layout
     testImplementation deps.junit
+    androidTestImplementation deps.dexmaker
     androidTestImplementation deps.atsl.runner
     androidTestImplementation(deps.espresso.core, {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
     })
 
-    // Room (use 1.1.0-alpha3 for latest alpha)
+
     annotationProcessor  deps.room.compiler
+
     implementation deps.room.runtime
     implementation deps.room.rxjava2
+    implementation deps.lifecycle.runtime
+    implementation deps.lifecycle.extensions
+    implementation deps.lifecycle.java8
 
     //import Rxjava library
     implementation deps.rx_android
