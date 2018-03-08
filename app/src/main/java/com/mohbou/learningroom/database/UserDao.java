@@ -9,6 +9,8 @@ import com.mohbou.learningroom.model.User;
 
 import java.util.List;
 
+import io.reactivex.Single;
+
 @Dao
 public interface UserDao {
 
@@ -19,11 +21,11 @@ public interface UserDao {
     void insertAll(User...users);
 
     @Query("SELECT COUNT(*) from user")
-    int usersCount();
+    Single<Integer> usersCount();
 
     @Query("SELECT * from user ORDER BY firstName")
-    List<User>  allUsers();
+    Single<List<User>> allUsers();
 
     @Query("SELECT * FROM user WHERE id= :id")
-    User findById(String id);
+    Single<User> findById(String id);
 }

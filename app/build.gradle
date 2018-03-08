@@ -43,6 +43,10 @@ dependencies {
     // Room (use 1.1.0-alpha3 for latest alpha)
     annotationProcessor  deps.room.compiler
     implementation deps.room.runtime
+    implementation deps.room.rxjava2
 
+    //import Rxjava library
+    implementation deps.rx_android
+    implementation deps.rxjava2
 
 }
